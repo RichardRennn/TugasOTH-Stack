@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100000
+
+typedef struct {
+    int top;
+    int data[MAX_SIZE];
+} Stack;
+
+// Program untuk push atau memasukkan data kedalam stack
+void push(Stack *stack, int value) {
+    stack->top++;
+    stack->data[stack->top] = value;  // Memasukkan nilai ke dalam array pada posisi top
+}
+
+// Program untuk pop atau mengeluarkan data dari stack paling atas
+int pop(Stack *stack) {
+    return stack->data[stack->top--];  // Mengembalikan nilai pada posisi top dan mengurangi indeks top
+}
+
+// Fungsi untuk mengambil nilai pada posisi top dari stack
+int top(Stack *stack) {
+    return stack->data[stack->top];  // Mengembalikan nilai pada posisi top tanpa mengubah indeks top
+}
+
+// Fungsi twoStacks untuk mengecek banyaknya operasi yang dilakukan
+int twoStacks(int total, int a[], int b[], int la, int lb) {
+    Stack stackA, stackB;  // Mendefinisikan dua stack untuk menyimpan data dari array a dan b
+    stackA.top = stackB.top = -1;  // Menginisialisasi indeks top stackA dan stackB menjadi stack kosong
+
+    // Memasukkan data dari array a ke dalam stackA
+    for (int i = la - 1; i >= 0; i--) {
+        push(&stackA, a[i]);
+    }
+
+    // Memasukkan data dari array b ke dalam stackB
+    for (int i = lb - 1; i >= 0; i--) {
+        push(&stackB, b[i]);
+    }
+
+    int sum = 0, counter = 0;  // Inisialisasi variabel untuk menyimpan jumlah total dan jumlah operasi
+
+    // Menentukan panjang perulangan sesuai dengan array a atau b yang lebih pendek
+    int panjang = la >= lb ? lb : la;
+
+    // Melakukan perulangan untuk mengecek jumlah operasi yang dapat dilakukan
+    for (int i = 0; i < panjang; i++) {
+        // Jika penjumlahan total dengan nilai pada stackA masih kurang dari atau sama dengan total
+        if (sum + top(&stackA) <= total) {
+            sum += pop(&stackA);  // Menambahkan nilai pada stackA ke dalam total
+            counter++;  // Menambahkan counter
+        }
+        // Jika penjumlahan total dengan nilai pada stackB masih kurang dari atau sama dengan total
+        if (sum + top(&stackB) <= total) {
+            sum += pop(&stackB);  // Menambahkan nilai pada stackB ke dalam total
+            counter++;  // Menambahkan counter
+        }
+    }
+
+    return counter;  // Mengembalikan jumlah operasi yang dapat dilakukan
+}
+
+int main() {
+    int g, n, m, total;
+    scanf("%d", &g);  // Input jumlah game
+    while (g--) {
+        scanf("%d %d %d", &n, &m, &total);  // Input jumlah data untuk stack a, stack b, dan total
+        int a[n], b[m];
+        for (int i = 0; i < n; i++) {
+            scanf("%d", &a[i]);  // Input data untuk stack a
+        }
+        for (int i = 0; i < m; i++) {
+            scanf("%d", &b[i]);  // Input data untuk stack b
+        }
+        int hasil = twoStacks(total, a, b, n, m);  // Memanggil fungsi twoStacks untuk menghitung hasil
+        printf("%d\n", hasil);  // Menampilkan hasil
+    }
+    return 0;
+}
